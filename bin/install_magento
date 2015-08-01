@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+
+set -ex
+
+main() {
+    local mageVersion="${1:-^1.0}"
+    printf 'Installing Magento version "%s".\n' "$mageVersion"
+    composer_install
+    install_magento
+    fix_base_url
+}
+
+composer_install() {
+    provide_github_token
+    composer config --global repositories.magento composer http://packages.magento.com
+    composer create-project --stability=dev --no-install magento/project-community-edition . $mageVersion
+    composer install
+}
+
+provide_github_token() {
+    if [[ $GITHUB_API_KEY ]]; then
+        composer config -g github-oauth.github.com "$GITHUB_API_KEY"
+    fi
+}
+
+install_magento() {
+    echo 'Installing Magento with default configuration'
+    cd "${MAGENTO_ROOT_DIR}" && \
+       php bin/magento setup:install \
+            --base-url="http://localhost/" \
+            --backend-frontname="admin" \
+            --db-host="db" \
+            --db-name="$DB_ENV_MYSQL_DATABASE" \
+            --db-user="$DB_ENV_MYSQL_USER" \
+            --db-password="$DB_ENV_MYSQL_PASSWORD" \
+            --admin-firstname="admin" \
+            --admin-lastname="admin" \
+            --admin-email="test@example.com" \
+            --admin-user="admin" \
+            --admin-password="testing123" \
+            --language="en_US" \
+            --currency="USD" \
+            --timezone="America/New_York" && \
+        php bin/magento cache:disable --all && \
+        php bin/magento setup:static-content:deploy
+}
+
+mysql() {
+    command mysql -h db -u "$DB_ENV_MYSQL_USER" --password="${DB_ENV_MYSQL_PASSWORD}" "$DB_ENV_MYSQL_DATABASE" "$@"
+}
+
+fix_base_url() {
+    mysql -e 'UPDATE core_config_data set value="{{base_url}}" where path="web/unsecure/base_url";'
+}
+
+main "$@"
