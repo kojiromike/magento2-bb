@@ -37,17 +37,20 @@ RUN php -r "readfile('https://getcomposer.org/installer');" \
 
 # Setup Apache dirs and configuration.
 
+ENV APACHE_RUN_USER www-data
+
 # Create a "default" user. Any volume mounted files should be owned by this
 # user, so web source files can be shared via a volume mount. Apache will be run
 # as this user by `apache_safe_start_perms` to have the necessary permissions
 # on any volume mounted files and directories.
-RUN adduser --system --uid=1000 default
+RUN deluser $APACHE_RUN_USER \
+ && adduser --system --uid=1000 $APACHE_RUN_USER
 
 # Magento will be installed at /var/www/html
 ENV MAGENTO_ROOT_DIR /var/www/html
 RUN rm -rf $MAGENTO_ROOT_DIR \
  && mkdir -p $MAGENTO_ROOT_DIR \
- && chown -R default $MAGENTO_ROOT_DIR
+ && chown -R $APACHE_RUN_USER $MAGENTO_ROOT_DIR
 
 WORKDIR $MAGENTO_ROOT_DIR
 VOLUME $MAGENTO_ROOT_DIR
@@ -62,4 +65,4 @@ COPY bin/* /usr/local/bin/
 COPY config/magento.php.ini /usr/local/etc/php/conf.d/magento.php.ini
 
 # `apache_safe_start_perms` will start apache as the "default" user.
-CMD ["apache_safe_start_perms", "-DFOREGROUND"]
+cmd ["/usr/sbin/apache2ctl", "-DFOREGROUND"]

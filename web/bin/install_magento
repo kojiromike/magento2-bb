@@ -8,6 +8,7 @@ main() {
     composer_install
     install_magento
     fix_base_url
+    fix_permissions
 }
 
 composer_install() {
@@ -51,6 +52,10 @@ mysql() {
 
 fix_base_url() {
     mysql -e 'UPDATE core_config_data set value="{{base_url}}" where path="web/unsecure/base_url";'
+}
+
+fix_permissions() {
+    chown -R www-data:www-data .
 }
 
 main "$@"
