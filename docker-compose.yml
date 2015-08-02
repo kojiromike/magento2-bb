@@ -1,12 +1,32 @@
+dbfs:
+    image: mysql:5
+    command: echo 'Providing data volume for mysql data'
+db:
+    image: mysql:5
+    environment:
+        - MYSQL_ROOT_PASSWORD=mage
+        - MYSQL_USER=mage
+        - MYSQL_PASSWORD=mage
+        - MYSQL_DATABASE=mage
+    volumes_from:
+        - dbfs
 fs:
     image: tianon/true
     volume: /var/www/localhost/magento
 web:
     build: web
+    environment:
+        - MAGE_MODE=developer
+    links:
+        - db
+    ports:
+        - "80"
     volumes_from:
         - fs
+    entrypoint:
+        - bootstrap
 edit:
-    build: editor
+    build: edit
     user: editor
     volumes:
         - ~/.vim:/home/editor/.vim

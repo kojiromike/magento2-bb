@@ -1,0 +1,14 @@
+#!/bin/sh
+
+##
+# If the webroot is empty, do a fresh install, then start apache.
+# Otherwise, just start apache.
+
+for f in "$MAGENTO_ROOT_DIR/"*; do
+    if [ -f "$f" ]; then
+        exec apache_safe_start_perms -DFOREGROUND
+    fi
+done
+
+install_magento "$@"
+exec apache_safe_start_perms -DFOREGROUND
