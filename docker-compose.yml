@@ -13,11 +13,12 @@ db:
 fs:
     image: tianon/true
     volumes:
-        - /var/www/localhost/magento
+        - /var/www/html
 web:
     build: web
     environment:
         - MAGE_MODE=developer
+    env_file: .env
     links:
         - db
     ports:
@@ -35,4 +36,4 @@ edit:
         - ~/.vimrc:/home/editor/.vimrc
     volumes_from:
         - fs
-    working_dir: /var/www/localhost/magento
+    working_dir: /var/www/html
