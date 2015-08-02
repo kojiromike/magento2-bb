@@ -12,7 +12,8 @@ db:
         - dbfs
 fs:
     image: tianon/true
-    volume: /var/www/localhost/magento
+    volumes:
+        - /var/www/localhost/magento
 web:
     build: web
     environment:
