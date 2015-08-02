@@ -43,16 +43,18 @@ RUN php -r "readfile('https://getcomposer.org/installer');" \
 # on any volume mounted files and directories.
 RUN adduser --system --uid=1000 default
 
-# Magento will be installed at /var/www/localhost/magento
-ENV MAGENTO_ROOT_DIR /var/www/localhost/magento
-RUN mkdir -p $MAGENTO_ROOT_DIR \
+# Magento will be installed at /var/www/html
+ENV MAGENTO_ROOT_DIR /var/www/html
+RUN rm -rf $MAGENTO_ROOT_DIR \
+ && mkdir -p $MAGENTO_ROOT_DIR \
  && chown -R default $MAGENTO_ROOT_DIR
 
 WORKDIR $MAGENTO_ROOT_DIR
 VOLUME $MAGENTO_ROOT_DIR
 
 # Add apache configuration and enable mod_rewrite
-RUN a2enmod rewrite
+RUN a2enmod rewrite \
+ && a2ensite 000-default
 
 COPY bin/* /usr/local/bin/
 
