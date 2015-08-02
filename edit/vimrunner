@@ -1,0 +1,13 @@
+#!/bin/sh
+
+##
+# If standard input/output/error are not open on a terminal
+# the this script is likely run from `docker-compose up`
+# and we just want to exit.
+
+if [ -t 0 ] && [ -t 1 ] && [ -t 2 ]; then
+    exec /usr/bin/vim "$@"
+fi
+
+echo 'Assuming $0 is being run as part of `docker-compose up`'
+echo 'because standard streams are not connected to a terminal.'

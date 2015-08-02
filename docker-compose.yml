@@ -1,0 +1,17 @@
+fs:
+    image: tianon/true
+    volume: /var/www/localhost/magento
+web:
+    build: web
+    volumes_from:
+        - fs
+edit:
+    build: editor
+    user: editor
+    volumes:
+        - ~/.vim:/home/editor/.vim
+        - ~/.viminfo:/home/editor/.viminfo
+        - ~/.vimrc:/home/editor/.vimrc
+    volumes_from:
+        - fs
+    working_dir: /var/www/localhost/magento
