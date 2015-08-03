@@ -29,6 +29,8 @@ web:
         - bootstrap
 edit:
     build: edit
+    links:
+        - web
     user: editor
     volumes_from:
         - fs

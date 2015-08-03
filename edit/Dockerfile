@@ -14,7 +14,7 @@ RUN apt-get update \
                          libxslt-dev \
                          mysql-client \
                          re2c \
-                         vim \
+                         vim-nox \
                          wget \
  && pecl install -o -f xdebug \
  && docker-php-ext-configure gd \

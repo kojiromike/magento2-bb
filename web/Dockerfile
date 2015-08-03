@@ -30,6 +30,11 @@ RUN apt-get update \
                            zip \
  && apt-get autoremove -qqy \
  && until rm -rf /var/lib/apt/lists; do sleep 1; done
+RUN pecl install -o -f xdebug \
+ && cd /usr/local/etc/php/conf.d \
+ && printf 'zend_extension=%s\n' /usr/local/lib/php/extensions/no-debug-non-zts-*/xdebug.so >> xdebug.ini \
+ && echo 'xdebug.remote_enable=On' >> xdebug.ini \
+ && echo 'xdebug.remote_connect_back=On' >> xdebug.ini
 
 # Install composer
 RUN php -r "readfile('https://getcomposer.org/installer');" \
@@ -68,4 +73,5 @@ COPY bin/* /usr/local/bin/
 COPY config/magento.php.ini /usr/local/etc/php/conf.d/magento.php.ini
 
 # `apache_safe_start_perms` will start apache as the "default" user.
-cmd ["/usr/sbin/apache2ctl", "-DFOREGROUND"]
+CMD ["/usr/sbin/apache2ctl", "-DFOREGROUND"]
+EXPOSE 9000
