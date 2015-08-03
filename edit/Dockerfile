@@ -47,3 +47,4 @@ RUN mkdir -p .vim/bundle \
  && git clone https://github.com/tpope/vim-sensible.git \
  && git clone https://github.com/joonty/vdebug.git \
  && chown -R editor:editor /home/editor
+EXPOSE 9000

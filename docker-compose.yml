@@ -29,8 +29,8 @@ web:
         - bootstrap
 edit:
     build: edit
-    links:
-        - web
+    ports:
+        - "9000:9000"
     user: editor
     volumes_from:
         - fs

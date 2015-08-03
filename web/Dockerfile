@@ -34,7 +34,9 @@ RUN pecl install -o -f xdebug \
  && cd /usr/local/etc/php/conf.d \
  && printf 'zend_extension=%s\n' /usr/local/lib/php/extensions/no-debug-non-zts-*/xdebug.so >> xdebug.ini \
  && echo 'xdebug.remote_enable=On' >> xdebug.ini \
- && echo 'xdebug.remote_connect_back=On' >> xdebug.ini
+ && echo ';xdebug.remote_connect_back=On' >> xdebug.ini \
+ && echo 'xdebug.remote_host=172.17.42.1' >> xdebug.ini \
+ && echo 'xdebug.remote_log=/tmp/xdebug.log' >> xdebug.ini
 
 # Install composer
 RUN php -r "readfile('https://getcomposer.org/installer');" \
@@ -74,4 +76,3 @@ COPY config/magento.php.ini /usr/local/etc/php/conf.d/magento.php.ini
 
 # `apache_safe_start_perms` will start apache as the "default" user.
 CMD ["/usr/sbin/apache2ctl", "-DFOREGROUND"]
-EXPOSE 9000
