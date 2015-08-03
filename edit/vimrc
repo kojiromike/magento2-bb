@@ -2,4 +2,5 @@ execute pathogen#infect()
 syntax on
 filetype plugin indent on
 call pathogen#helptags()
-let g:vdebug_options['server'] = ""
+let g:vdebug_options = {}
+let g:vdebug_options['server'] = ''
